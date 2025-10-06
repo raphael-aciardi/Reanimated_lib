@@ -1,27 +1,28 @@
 import { Button, View } from 'react-native';
-import Animated, { useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
+import { styles } from './styles';
 
 export default function FirstAnimation() {
-  const width = useSharedValue(100);
-  const handlePress = (equation: 'plus' | 'minus') => {
-    if (equation === 'plus') {
-      width.value = withSpring(width.value + 50);
-    } else if (equation === 'minus') {
-      width.value = withSpring(width.value - 50);
-      console.log(width);
-    }
+  const translateX = useSharedValue<number>(0);
+
+  const handlePress = () => {
+    translateX.value += 50;
   };
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [{ translateX: withSpring(translateX.value) }],
+  }));
+
   return (
-    <View>
-      <Animated.View
-        style={{
-          width,
-          height: 100,
-          backgroundColor: 'violet',
-        }}
-      />
-      <Button onPress={() => handlePress('plus')} title="Plus" />
-      <Button onPress={() => handlePress('minus')} title="Minus" />
-    </View>
+    <>
+      <Animated.View style={[styles.box, animatedStyles]} />
+      <View style={styles.container}>
+        <Button onPress={handlePress} title="Click me" />
+      </View>
+    </>
   );
 }
